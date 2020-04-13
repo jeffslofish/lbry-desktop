@@ -1,10 +1,7 @@
 // @flow
 import React, { useEffect } from 'react';
 import { withRouter } from 'react-router';
-
-import { TX_LIST } from 'lbry-redux';
-import * as TXO from 'constants/txo_list';
-
+import { TXO_LIST as TXO } from 'lbry-redux';
 import TransactionListTable from 'component/transactionListTable';
 import Paginate from 'component/common/paginate';
 // import FileExporter from '../common/file-exporter'; // reimplement as modal
@@ -31,11 +28,10 @@ type Delta = {
 function TxoList(props: Props) {
   const { search, txoPage, txoItemCount, fetchTxoPage, updateTxoPageParams, history } = props;
 
-  console.log('tp', txoPage);
   // parse urlParams
   const urlParams = new URLSearchParams(search);
   const page = urlParams.get(TXO.PAGE) || String(1);
-  const pageSize = urlParams.get(TXO.PAGE_SIZE) || String(TX_LIST.PAGE_SIZE);
+  const pageSize = urlParams.get(TXO.PAGE_SIZE) || String(TXO.PAGE_SIZE_DEFAULT);
   const type = urlParams.get(TXO.TYPE);
   const subtype = urlParams.get(TXO.SUB_TYPE);
   const active = urlParams.get(TXO.ACTIVE) || TXO.ACTIVE;

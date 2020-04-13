@@ -61,7 +61,6 @@ class TxoListItem extends React.PureComponent<Props, State> {
     const isMinus = (type === 'support' || type === 'payment' || type === 'other') && isMyInput && !isMyOutput;
     const isTip = type === 'support' && ((isMyInput && !isMyOutput) || (!isMyInput && isMyOutput));
     const date = new Date(timestamp * 1000);
-    console.log('timestamp', timestamp);
 
     // Ensure the claim name exists and is valid
     let uri;

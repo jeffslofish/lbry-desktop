@@ -14,7 +14,6 @@ export default function ModalRevokeClaim(props: Props) {
   const { tx, closeModal, abandonTxo } = props;
   const { value_type: valueType, type, normalized_name: name } = tx;
   const [channelName, setChannelName] = useState('');
-  console.log('channelName', channelName);
 
   function getButtonLabel(type: string) {
     if (type === txnTypes.TIP) {
