@@ -214,6 +214,11 @@
   border-top: 1px solid var(--color-border);
 }
 
+.card__body-actions {
+  padding: var(--spacing-large);
+  padding-bottom: 0;
+}
+
 .card__header-actions {
   border-top: 1px solid var(--color-border);
   padding: var(--spacing-large);

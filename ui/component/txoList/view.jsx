@@ -3,7 +3,6 @@ import React, { useEffect } from 'react';
 import { withRouter } from 'react-router';
 
 import { TX_LIST } from 'lbry-redux';
-import * as PAGES from 'constants/pages';
 import * as TXO from 'constants/txo_list';
 
 import TransactionListTable from 'component/transactionListTable';
@@ -17,10 +16,11 @@ import { toCapitalCase } from '../../util/string';
 type Props = {
   search: string,
   history: { action: string, push: string => void, replace: string => void },
-  transactionPage: Array<Transaction>,
-  transactionPageNumber: string,
-  transactionItemCount: number,
-  fetchTransactionPage: any => void,
+  txoPage: Array<Transaction>,
+  txoPageNumber: string,
+  txoItemCount: number,
+  fetchTxoPage: () => void,
+  updateTxoPageParams: any => void,
 };
 
 type Delta = {
@@ -29,8 +29,9 @@ type Delta = {
 };
 
 function TxoList(props: Props) {
-  const { search, transactionPage, transactionItemCount, fetchTransactionPage, history } = props;
+  const { search, txoPage, txoItemCount, fetchTxoPage, updateTxoPageParams, history } = props;
 
+  console.log('tp', txoPage);
   // parse urlParams
   const urlParams = new URLSearchParams(search);
   const page = urlParams.get(TXO.PAGE) || String(1);
@@ -161,100 +162,98 @@ function TxoList(props: Props) {
   const paramsString = JSON.stringify(params);
 
   useEffect(() => {
-    if (paramsString && fetchTransactionPage) {
+    if (paramsString && updateTxoPageParams) {
       const params = JSON.parse(paramsString);
-      fetchTransactionPage(params);
+      updateTxoPageParams(params);
     }
-  }, [paramsString, fetchTransactionPage]);
+  }, [paramsString, updateTxoPageParams]);
 
   return (
     <Card
       title={__(`Transactions`)}
       titleActions={
         <div className="card__actions--inline">
-          <Button button="secondary" label={__('Refresh')} onClick={() => fetchTransactionPage(params)} />
-          {/* @if TARGET='app' */}
-          <Button button="primary" navigate={`/$/${PAGES.TRANSACTIONS}`} label={__('Full History')} />
-          {/* @endif */}
+          <Button button="secondary" label={__('Refresh')} onClick={() => fetchTxoPage()} />
         </div>
       }
-      headerActions={
-        <div className="card__actions--between">
-          <div>
-            <div className="card__actions">
-              {/* show the main drop down */}
-              <div>
-                <FormField
-                  type="select"
-                  name="type"
-                  label={__('Type')}
-                  value={type || 'all'}
-                  onChange={e => handleChange({ dkey: TXO.TYPE, value: e.target.value })}
-                >
-                  {Object.values(TXO.DROPDOWN_TYPES).map(v => {
-                    const stringV = String(v);
-                    return (
-                      <option key={stringV} value={stringV}>
-                        {stringV && __(toCapitalCase(stringV))}
-                      </option>
-                    );
-                  })}
-                </FormField>
-              </div>
-              {/* show the subtypes drop down */}
-              {(type === TXO.SENT || type === TXO.RECEIVED) && (
-                <div>
-                  <FormField
-                    type="select"
-                    name="subtype"
-                    label={__('Payment Type')}
-                    value={subtype || 'all'}
-                    onChange={e => handleChange({ dkey: TXO.SUB_TYPE, value: e.target.value })}
-                  >
-                    {Object.values(TXO.DROPDOWN_SUBTYPES).map(v => {
-                      const stringV = String(v);
-                      return (
-                        <option key={stringV} value={stringV}>
-                          {stringV && __(toCapitalCase(stringV))}
-                        </option>
-                      );
-                    })}
-                  </FormField>
-                </div>
-              )}
-            </div>
-          </div>
-          {/* show active/spent */}
-          <div>
-            <FormField
-              type="radio"
-              name="active"
-              checked={active === TXO.ACTIVE}
-              onChange={e => handleChange({ dkey: TXO.ACTIVE, value: 'active' })}
-              label={__(toCapitalCase('active'))}
-            />
-            <FormField
-              type="radio"
-              name="spent"
-              checked={active === 'spent'}
-              onChange={e => handleChange({ dkey: TXO.ACTIVE, value: 'spent' })}
-              label={__(toCapitalCase('historical'))}
-            />
-            <FormField
-              type="radio"
-              name="all"
-              checked={active === 'all'}
-              onChange={e => handleChange({ dkey: TXO.ACTIVE, value: 'all' })}
-              label={__(toCapitalCase('all'))}
-            />
-          </div>
-        </div>
-      }
+      isBodyTable
       body={
         <div>
-          <Paginate totalPages={Math.ceil(transactionItemCount / Number(pageSize))} />
-          <TransactionListTable txos={transactionPage} />
-          <Paginate totalPages={Math.ceil(transactionItemCount / Number(pageSize))} />
+          <div className="card__body-actions">
+            <div className="card__actions--between">
+              <div>
+                <div className="card__actions">
+                  {/* show the main drop down */}
+                  <div>
+                    <FormField
+                      type="select"
+                      name="type"
+                      label={__('Type')}
+                      value={type || 'all'}
+                      onChange={e => handleChange({ dkey: TXO.TYPE, value: e.target.value })}
+                    >
+                      {Object.values(TXO.DROPDOWN_TYPES).map(v => {
+                        const stringV = String(v);
+                        return (
+                          <option key={stringV} value={stringV}>
+                            {stringV && __(toCapitalCase(stringV))}
+                          </option>
+                        );
+                      })}
+                    </FormField>
+                  </div>
+                  {/* show the subtypes drop down */}
+                  {(type === TXO.SENT || type === TXO.RECEIVED) && (
+                    <div>
+                      <FormField
+                        type="select"
+                        name="subtype"
+                        label={__('Payment Type')}
+                        value={subtype || 'all'}
+                        onChange={e => handleChange({ dkey: TXO.SUB_TYPE, value: e.target.value })}
+                      >
+                        {Object.values(TXO.DROPDOWN_SUBTYPES).map(v => {
+                          const stringV = String(v);
+                          return (
+                            <option key={stringV} value={stringV}>
+                              {stringV && __(toCapitalCase(stringV))}
+                            </option>
+                          );
+                        })}
+                      </FormField>
+                    </div>
+                  )}
+                </div>
+              </div>
+              {/* show active/spent */}
+              <div>
+                <FormField
+                  type="radio"
+                  name="active"
+                  checked={active === TXO.ACTIVE}
+                  onChange={e => handleChange({ dkey: TXO.ACTIVE, value: 'active' })}
+                  label={__(toCapitalCase('active'))}
+                />
+                <FormField
+                  type="radio"
+                  name="spent"
+                  checked={active === 'spent'}
+                  onChange={e => handleChange({ dkey: TXO.ACTIVE, value: 'spent' })}
+                  label={__(toCapitalCase('historical'))}
+                />
+                <FormField
+                  type="radio"
+                  name="all"
+                  checked={active === 'all'}
+                  onChange={e => handleChange({ dkey: TXO.ACTIVE, value: 'all' })}
+                  label={__(toCapitalCase('all'))}
+                />
+              </div>
+            </div>
+            <Paginate totalPages={Math.ceil(txoItemCount / Number(pageSize))} />
+          </div>
+          <TransactionListTable txos={txoPage} />
+          <Paginate totalPages={Math.ceil(txoItemCount / Number(pageSize))} />
         </div>
       }
     />

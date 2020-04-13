@@ -6,14 +6,15 @@ import * as txnTypes from 'constants/transaction_types';
 
 type Props = {
   closeModal: () => void,
-  abandonClaim: (string, number) => void,
+  abandonTxo: Txo => void,
   tx: Txo,
 };
 
 export default function ModalRevokeClaim(props: Props) {
-  const { tx, closeModal, abandonClaim } = props;
-  const { value_type: valueType, type, normalized_name: name, txid, nout } = tx;
+  const { tx, closeModal, abandonTxo } = props;
+  const { value_type: valueType, type, normalized_name: name } = tx;
   const [channelName, setChannelName] = useState('');
+  console.log('channelName', channelName);
 
   function getButtonLabel(type: string) {
     if (type === txnTypes.TIP) {
@@ -79,7 +80,7 @@ export default function ModalRevokeClaim(props: Props) {
   }
 
   function revokeClaim() {
-    abandonClaim(txid, nout);
+    abandonTxo(tx);
     closeModal();
   }
 
@@ -92,7 +93,7 @@ export default function ModalRevokeClaim(props: Props) {
       confirmButtonLabel={getButtonLabel(type)}
       onConfirmed={revokeClaim}
       onAborted={closeModal}
-      confirmButtonDisabled={type === txnTypes.CHANNEL && name !== channelName}
+      confirmButtonDisabled={valueType === txnTypes.CHANNEL && name !== channelName}
     >
       <section>{getMsgBody(type, name)}</section>
     </Modal>

@@ -24,7 +24,6 @@ type State = {
 class TxoListItem extends React.PureComponent<Props, State> {
   constructor() {
     super();
-    this.state = { disabled: false };
     (this: any).abandonClaim = this.abandonClaim.bind(this);
     (this: any).getLink = this.getLink.bind(this);
   }
@@ -34,23 +33,14 @@ class TxoListItem extends React.PureComponent<Props, State> {
       return <Button button="secondary" icon={ICONS.UNLOCK} onClick={this.abandonClaim} title={__('Unlock Tip')} />;
     }
     const abandonTitle = type === TXN_TYPES.SUPPORT ? 'Abandon Support' : 'Abandon Claim';
-    return (
-      <Button
-        disabled={this.state.disabled}
-        button="secondary"
-        icon={ICONS.DELETE}
-        onClick={this.abandonClaim}
-        title={__(abandonTitle)}
-      />
-    );
+    return <Button button="secondary" icon={ICONS.DELETE} onClick={this.abandonClaim} title={__(abandonTitle)} />;
   }
 
   abandonClaim() {
-    this.setState({ disabled: true }); // just flag the item disabled
     this.props.revokeClaim(this.props.txo);
   }
 
-  capitalize = (string: ?string) => string && string.charAt(0).toUpperCase() + string.slice(1);
+  capitalize = (string: string) => string && string.charAt(0).toUpperCase() + string.slice(1);
 
   render() {
     const { reward, txo, isRevokeable } = this.props;
@@ -71,6 +61,7 @@ class TxoListItem extends React.PureComponent<Props, State> {
     const isMinus = (type === 'support' || type === 'payment' || type === 'other') && isMyInput && !isMyOutput;
     const isTip = type === 'support' && ((isMyInput && !isMyOutput) || (!isMyInput && isMyOutput));
     const date = new Date(timestamp * 1000);
+    console.log('timestamp', timestamp);
 
     // Ensure the claim name exists and is valid
     let uri;
@@ -96,7 +87,7 @@ class TxoListItem extends React.PureComponent<Props, State> {
     return (
       <tr>
         <td>
-          {date ? (
+          {timestamp ? (
             <div>
               <DateTime date={date} show={DateTime.SHOW_DATE} formatOptions={dateFormat} />
               <div className="table__item-label">
@@ -109,7 +100,9 @@ class TxoListItem extends React.PureComponent<Props, State> {
         </td>
         <td className="table__item--actionable">
           <span>
-            {(isTip && this.capitalize('tip')) || (valueType && this.capitalize(valueType)) || this.capitalize(type)}
+            {(isTip && __(this.capitalize('tip'))) ||
+              (valueType && __(this.capitalize(valueType))) ||
+              (type && __(this.capitalize(type)))}
           </span>{' '}
           {isRevokeable && this.getLink(type)}
         </td>

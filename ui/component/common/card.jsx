@@ -11,7 +11,6 @@ type Props = {
   title?: string | Node,
   subtitle?: string | Node,
   titleActions?: string | Node,
-  headerActions?: string | Node,
   body?: string | Node,
   actions?: string | Node,
   icon?: string,
@@ -26,7 +25,6 @@ export default function Card(props: Props) {
     title,
     subtitle,
     titleActions,
-    headerActions,
     body,
     actions,
     icon,
@@ -65,7 +63,6 @@ export default function Card(props: Props) {
           </div>
         </div>
       )}
-      {headerActions && <div className="card__header-actions">{headerActions}</div>}
       {(!expandable || (expandable && expanded)) && (
         <>
           {body && (
