@@ -1150,5 +1150,12 @@
   "Historical": "Historical",
   "Reposts": "Reposts",
   "lbry": "lbry",
-  "Default": "Default"
+  "Default": "Default",
+  "chillstep": "chillstep",
+  "economics": "economics",
+  "education": "education",
+  "linux": "linux",
+  "math": "math",
+  "news": "news",
+  "science": "science"
 }

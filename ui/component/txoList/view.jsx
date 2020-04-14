@@ -4,11 +4,11 @@ import { withRouter } from 'react-router';
 import { TXO_LIST as TXO } from 'lbry-redux';
 import TransactionListTable from 'component/transactionListTable';
 import Paginate from 'component/common/paginate';
-// import FileExporter from '../common/file-exporter'; // reimplement as modal
-import { FormField } from '../common/form-components/form-field';
-import Button from '../button';
-import Card from '../common/card';
-import { toCapitalCase } from '../../util/string';
+import { FormField } from 'component/common/form-components/form-field';
+import Button from 'component/button';
+import Card from 'component/common/card';
+import { toCapitalCase } from 'util/string';
+import classnames from 'classnames';
 
 type Props = {
   search: string,
@@ -46,7 +46,6 @@ function TxoList(props: Props) {
 
   // build new json params
   const params = {};
-
   if (currentUrlParams.type) {
     if (currentUrlParams.type === TXO.SENT) {
       params[TXO.IS_MY_INPUT] = true;
@@ -82,7 +81,6 @@ function TxoList(props: Props) {
       params[TXO.TX_TYPE] = TXO.STREAM;
     }
   }
-
   if (currentUrlParams.active) {
     if (currentUrlParams.active === 'spent') {
       params[TXO.IS_SPENT] = true;
@@ -90,7 +88,6 @@ function TxoList(props: Props) {
       params[TXO.IS_NOT_SPENT] = true;
     }
   }
-
   if (currentUrlParams.page) params[TXO.PAGE] = Number(page);
   if (currentUrlParams.pageSize) params[TXO.PAGE_SIZE] = Number(pageSize);
 
@@ -222,31 +219,33 @@ function TxoList(props: Props) {
                 </div>
               </div>
               {/* show active/spent */}
-              <div>
-                <FormField
-                  type="radio"
-                  name="active"
-                  checked={active === TXO.ACTIVE}
-                  onChange={e => handleChange({ dkey: TXO.ACTIVE, value: 'active' })}
+              <div className={'txo__radios'}>
+                <Button
+                  button="alt"
+                  onClick={e => handleChange({ dkey: TXO.ACTIVE, value: 'active' })}
+                  className={classnames(`button-toggle`, {
+                    'button-toggle--active': active === TXO.ACTIVE,
+                  })}
                   label={__(toCapitalCase('active'))}
                 />
-                <FormField
-                  type="radio"
-                  name="spent"
-                  checked={active === 'spent'}
-                  onChange={e => handleChange({ dkey: TXO.ACTIVE, value: 'spent' })}
+                <Button
+                  button="alt"
+                  onClick={e => handleChange({ dkey: TXO.ACTIVE, value: 'spent' })}
+                  className={classnames(`button-toggle`, {
+                    'button-toggle--active': active === 'spent',
+                  })}
                   label={__(toCapitalCase('historical'))}
                 />
-                <FormField
-                  type="radio"
-                  name="all"
-                  checked={active === 'all'}
-                  onChange={e => handleChange({ dkey: TXO.ACTIVE, value: 'all' })}
+                <Button
+                  button="alt"
+                  onClick={e => handleChange({ dkey: TXO.ACTIVE, value: 'all' })}
+                  className={classnames(`button-toggle`, {
+                    'button-toggle--active': active === 'all',
+                  })}
                   label={__(toCapitalCase('all'))}
                 />
               </div>
             </div>
-            <Paginate totalPages={Math.ceil(txoItemCount / Number(pageSize))} />
           </div>
           <TransactionListTable txos={txoPage} />
           <Paginate totalPages={Math.ceil(txoItemCount / Number(pageSize))} />

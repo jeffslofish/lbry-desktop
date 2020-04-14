@@ -24,20 +24,38 @@ type State = {
 class TxoListItem extends React.PureComponent<Props, State> {
   constructor() {
     super();
+    this.state = { disabled: false };
     (this: any).abandonClaim = this.abandonClaim.bind(this);
     (this: any).getLink = this.getLink.bind(this);
   }
 
   getLink(type: string) {
     if (type === TXN_TYPES.TIP) {
-      return <Button button="secondary" icon={ICONS.UNLOCK} onClick={this.abandonClaim} title={__('Unlock Tip')} />;
+      return (
+        <Button
+          disabled={this.state.disabled}
+          button="secondary"
+          icon={ICONS.UNLOCK}
+          onClick={this.abandonClaim}
+          title={__('Unlock Tip')}
+        />
+      );
     }
     const abandonTitle = type === TXN_TYPES.SUPPORT ? 'Abandon Support' : 'Abandon Claim';
-    return <Button button="secondary" icon={ICONS.DELETE} onClick={this.abandonClaim} title={__(abandonTitle)} />;
+    return (
+      <Button
+        disabled={this.state.disabled}
+        button="secondary"
+        icon={ICONS.DELETE}
+        onClick={this.abandonClaim}
+        title={__(abandonTitle)}
+      />
+    );
   }
 
   abandonClaim() {
     this.props.revokeClaim(this.props.txo);
+    this.setState({ disabled: true }); // just flag the item disabled
   }
 
   capitalize = (string: string) => string && string.charAt(0).toUpperCase() + string.slice(1);
